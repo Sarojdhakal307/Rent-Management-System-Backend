@@ -18,7 +18,7 @@ const userScheme = pgTable("UserTable", {
 });
 
 const AdminTable = pgTable("admin", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
   name: varchar("name").notNull(),
   username: varchar("username").notNull(),
   email: varchar("email").notNull().unique(),
