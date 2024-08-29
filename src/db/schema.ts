@@ -17,8 +17,8 @@ const userScheme = pgTable("UserTable", {
   phone: integer("phone"),
 });
 
-const adminSchema = pgTable("AdminTable", {
-  id: uuid("id").primaryKey(),
+const AdminTable = pgTable("admin", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
   name: varchar("name").notNull(),
   username: varchar("username").notNull(),
   email: varchar("email").notNull().unique(),
@@ -29,4 +29,4 @@ const adminSchema = pgTable("AdminTable", {
 });
 
 
-export { userScheme ,adminSchema};
+export { userScheme ,AdminTable};
