@@ -5,8 +5,22 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1724862116428,
-      "tag": "0000_worried_pyro",
+      "when": 1724871328798,
+      "tag": "0000_previous_bastion",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1724871367112,
+      "tag": "0001_broad_selene",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1724871442775,
+      "tag": "0002_illegal_excalibur",
       "breakpoints": true
     }
   ]

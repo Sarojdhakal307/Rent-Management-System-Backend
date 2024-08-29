@@ -4,7 +4,7 @@
   "description": "A backend API for a Rent Management System built with Node.js, Express, TypeScript, and PostgreSQL. Utilizing Drizzle ORM for database management.",
   "main": "./src/index.ts",
   "scripts": {
-    "start": "nodemon --exec ts-node ./src/index.ts",
+    "start": "tsx watch --clear-screen=false src/index.ts",
     "migration:generate": "drizzle-kit generate",
     "migration:migrate": "drizzle-kit migrate"
   },
