@@ -97,6 +97,9 @@ export async function signUpHandler(req: Request, res: Response) {
   const payloadToken: string | undefined = req.cookies.payloadToken?.toString(); // cookies
   const otpToken: string | undefined = req.cookies.otpToken?.toString();
 
+  res.clearCookie("payloadToken");
+  res.clearCookie("otpToken");
+
   if (!payloadToken || !otpToken) {
     res.status(401);
     return;
