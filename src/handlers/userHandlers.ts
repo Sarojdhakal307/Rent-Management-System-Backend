@@ -31,10 +31,23 @@ export async function signupRequestHandler(req: Request, res: Response) {
     if (!validMailFlag) {
       return res.status(400).json({ error: "Invalid email format" });
     }
+    const user = await db
+      .select()
+      .from(AdminTable)
+      .where(eq(AdminTable.email, email));
 
-    console.log("ValidMailFlag : ", validMailFlag);
+    if (user.length !== 0) {
+      res.status(401);
+      res.json({ err: "User already exist" });
+      res.end();
+      return;
+    }
+
+    // console.log("ValidMailFlag : ", validMailFlag);
     const hashedPassword = await hashPassword(password);
     if (!hashedPassword) {
+      res.status(404);
+      res.json({ err: "passwordHashinv err" });
       res.end();
       return;
     }
@@ -151,7 +164,7 @@ export async function logInHandler(req: Request, res: Response) {
     const userAccess = await comparePassword(password, user[0].password);
 
     if (!userAccess) {
-      res.status(400)
+      res.status(400);
       res.json({ err: "Invalid password" });
       res.end();
       return;

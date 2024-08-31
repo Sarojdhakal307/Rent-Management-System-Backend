@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import nodemailer from "nodemailer";
 import dns from "dns";
 import net from "net";
@@ -20,15 +23,15 @@ export function generateOTP() {
 export const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "sarojdhakal307@gmail.com",
-    pass: "sggt tsqe jzsb sawj",
+    user: process.env.MAIL_ADDRESS,
+    pass: process.env.MAIL_PASS,
   },
 });
 
 export const signUpMailOTP = async (email: string, userName: string) => {
   const OTP: number = parseInt(generateOTP());
   const signupOTP_MailOptions = {
-    from: "sarojdhakal307@gmail.com",
+    from: process.env.MAIL_ADDRESS,
     to: email,
     subject: "SignUp - OTP verification",
     html: `
