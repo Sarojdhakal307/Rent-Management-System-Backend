@@ -5,36 +5,22 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1724871328798,
-      "tag": "0000_previous_bastion",
+      "when": 1725212721291,
+      "tag": "0000_heavy_bulldozer",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1724871367112,
-      "tag": "0001_broad_selene",
+      "when": 1725212849417,
+      "tag": "0001_pretty_microbe",
       "breakpoints": true
     },
     {
       "idx": 2,
       "version": "7",
-      "when": 1724871442775,
-      "tag": "0002_illegal_excalibur",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1724926487059,
-      "tag": "0003_dark_piledriver",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1724932776944,
-      "tag": "0004_broken_marauders",
+      "when": 1725212883631,
+      "tag": "0002_striped_tinkerer",
       "breakpoints": true
     }
   ]

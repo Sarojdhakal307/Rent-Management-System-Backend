@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { eq, lt, gte, ne } from "drizzle-orm";
 
 import { db } from "../db/db_connect";
-import { AdminTable } from "../db/schema";
+import { LandlordTable } from "../db/schema";
 import {
   hashPassword,
   jwtgenerate,
@@ -33,8 +33,8 @@ export async function signupRequestHandler(req: Request, res: Response) {
     }
     const user = await db
       .select()
-      .from(AdminTable)
-      .where(eq(AdminTable.email, email));
+      .from(LandlordTable)
+      .where(eq(LandlordTable.email, email));
 
     if (user.length !== 0) {
       res.status(401);
@@ -126,7 +126,7 @@ export async function signUpHandler(req: Request, res: Response) {
     }
 
     const user = await db
-      .insert(AdminTable)
+      .insert(LandlordTable)
       .values({
         name: new_User.name as string,
         username: uid.rnd() as string,
@@ -135,7 +135,7 @@ export async function signUpHandler(req: Request, res: Response) {
         address: new_User.address as string,
       })
       .returning({
-        id: AdminTable.id,
+        id: LandlordTable.id,
       });
     const token = await jwtgenerate(user[0].id);
 
@@ -158,8 +158,8 @@ export async function logInHandler(req: Request, res: Response) {
   try {
     const user = await db
       .selectDistinct()
-      .from(AdminTable)
-      .where(eq(AdminTable.email, email));
+      .from(LandlordTable)
+      .where(eq(LandlordTable.email, email));
 
     const userAccess = await comparePassword(password, user[0].password);
 

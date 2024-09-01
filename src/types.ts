@@ -1,7 +1,8 @@
 import { pgEnum } from "drizzle-orm/pg-core";
 
-
-export const roleEnum = pgEnum("role", ["superAdmin", "tenant", "landlord"]);
+export type Role = "superAdmin" | "tenant" | "landlord";
+export type DocumentType = "passport" | "citizen" | "id";
+export type SpaceType = "flat" | "room";
 
 export interface signUpReqType{
     name: string,
