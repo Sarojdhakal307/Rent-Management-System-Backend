@@ -37,12 +37,14 @@ const TenantTable = pgTable(
     id: uuid("id").primaryKey().notNull().defaultRandom(),
     fullname: varchar("fullname").notNull(),
     role: roleEnum("role").default("tenant").notNull(),
+    permanentaddress: varchar("address").notNull(),
     document: docEnum("document").notNull(),
     documentnumber: varchar("documentnumber").notNull(),
     livingspacetype: spacetypeEnum("livingspacetype").notNull(),
     livingspacenumber: varchar("livingspacenumber").notNull(),
     landlordid: uuid("landlordid").notNull().references(() => LandlordTable.id, { onDelete: 'cascade' }),
     generatedspaceid:varchar("generatedspaceId").notNull().unique(),
+    generateddocid: varchar("generatedDocumentId").notNull().unique(),
     // generatedspaceid: varchar("generatedspaceid").generatedAlwaysAs(
     //   (): SQL => sql`${TenantTable.livingspacetype} || '-' || ${TenantTable.livingspace_number}`
     // ).notNull(),

@@ -22,6 +22,13 @@
       "when": 1725212883631,
       "tag": "0002_striped_tinkerer",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1725260241557,
+      "tag": "0003_burly_electro",
+      "breakpoints": true
     }
   ]
 }
