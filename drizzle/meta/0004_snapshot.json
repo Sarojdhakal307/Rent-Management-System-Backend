@@ -1,0 +1,230 @@
+{
+  "id": "84b5f92c-de6c-47f4-a9b1-eb9ff59e047b",
+  "prevId": "7824b4b6-692f-4ef7-b935-4ed66ccc216a",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.landlord": {
+      "name": "landlord",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'landlord'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "landlord_email_unique": {
+          "name": "landlord_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
+    },
+    "public.tenant": {
+      "name": "tenant",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "fullname": {
+          "name": "fullname",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'tenant'"
+        },
+        "permanentaddress": {
+          "name": "permanentaddress",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "document": {
+          "name": "document",
+          "type": "docType",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "documentnumber": {
+          "name": "documentnumber",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "livingspacetype": {
+          "name": "livingspacetype",
+          "type": "spacetypeEnum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "livingspacenumber": {
+          "name": "livingspacenumber",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "landlordid": {
+          "name": "landlordid",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "generatedspaceId": {
+          "name": "generatedspaceId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "generatedDocumentId": {
+          "name": "generatedDocumentId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "tenant_landlordid_landlord_id_fk": {
+          "name": "tenant_landlordid_landlord_id_fk",
+          "tableFrom": "tenant",
+          "tableTo": "landlord",
+          "columnsFrom": [
+            "landlordid"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "tenant_generatedspaceId_unique": {
+          "name": "tenant_generatedspaceId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "generatedspaceId"
+          ]
+        },
+        "tenant_generatedDocumentId_unique": {
+          "name": "tenant_generatedDocumentId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "generatedDocumentId"
+          ]
+        }
+      }
+    }
+  },
+  "enums": {
+    "public.docType": {
+      "name": "docType",
+      "schema": "public",
+      "values": [
+        "passport",
+        "citizen",
+        "id"
+      ]
+    },
+    "public.role": {
+      "name": "role",
+      "schema": "public",
+      "values": [
+        "superAdmin",
+        "tenant",
+        "landlord"
+      ]
+    },
+    "public.spacetypeEnum": {
+      "name": "spacetypeEnum",
+      "schema": "public",
+      "values": [
+        "flat",
+        "room"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

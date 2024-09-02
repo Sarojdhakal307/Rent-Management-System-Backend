@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { eq, lt, gte, ne } from "drizzle-orm";
+import { sql, SQL, eq, lt, gte, ne, or, and } from "drizzle-orm";
 
 import { db } from "../db/db_connect";
-import { LandlordTable } from "../db/schema";
+import { LandlordTable, TenantTable } from "../db/schema";
 import {
   hashPassword,
   jwtgenerate,
@@ -13,7 +13,11 @@ import {
   jwtgenerate_OTP,
   jwtverify_OTP,
 } from "../lib/auth";
+
+import { addTenantType, Role, DocumentType, SpaceType } from "./../types";
 import { transporter, signUpMailOTP, generateOTP } from "../lib/mailServices";
+import { generateddocId, generatespaceId } from "../lib/lib";
+
 import ShortUniqueId from "short-unique-id";
 
 import validator from "validator";
@@ -179,3 +183,87 @@ export async function logInHandler(req: Request, res: Response) {
     return;
   }
 }
+
+export const addtenantHandler = async (req: Request, res: Response) => {
+  const {
+    fullname,
+    permanentaddress,
+    document,
+    documentnumber,
+    livingspacetype,
+    livingspacenumber,
+  }: addTenantType = req.body;
+  if (
+    !fullname ||
+    !permanentaddress ||
+    !document ||
+    !documentnumber ||
+    !livingspacetype ||
+    !livingspacenumber
+  ) {
+    res.status(404);
+    res.json({ error: "invalid requires parameter" });
+    res.end();
+    return;
+  }
+  const generatedspaceid = await generatespaceId(
+    livingspacetype,
+    livingspacenumber
+  );
+  const generateddocid = await generateddocId(document, documentnumber);
+
+  const tenantsData = await db
+    .select()
+    .from(TenantTable)
+    .where(
+      sql`${TenantTable.generateddocid} = ${generateddocid} AND ${TenantTable.generatedspaceid} = ${generatedspaceid}`
+    );
+
+  if (tenantsData.length !== 0) {
+    res.status(404);
+    res.json({ error: "Duplicate information " });
+    res.end();
+    return;
+  }
+  // console.log(
+  //   fullname,
+  //   permanentaddress,
+  //   document,
+  //   documentnumber,
+  //   livingspacetype,
+  //   livingspacenumber,
+  //   generateddocid,
+  //   generatedspaceid,
+  //   req.id
+  // );
+
+  const newTenant = await db
+    .insert(TenantTable)
+    .values({
+      fullname: fullname as string,
+      permanentaddress: permanentaddress as string,
+      document: document as DocumentType,
+      documentnumber: documentnumber as string,
+      livingspacetype: livingspacetype as SpaceType,
+      livingspacenumber: livingspacenumber as string,
+      generateddocid: generateddocid as string,
+      generatedspaceid: generatedspaceid as string,
+      landlordid: req.id as string
+    })
+    .returning({
+      id: TenantTable.id,
+      generateddocid: TenantTable.generateddocid, //as password
+      generatedspaceid: TenantTable.generatedspaceid, //as username
+    });
+
+  res.status(201);
+  res.json({
+    AddTenant: "Sucess",
+    userId: "generatedspaceid",
+    password: "generateddocid",
+    generatedspaceid: generatedspaceid,
+    generateddocid: generateddocid,
+  });
+  res.end();
+  return;
+};

@@ -29,6 +29,13 @@
       "when": 1725260241557,
       "tag": "0003_burly_electro",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1725268530134,
+      "tag": "0004_curly_tyrannus",
+      "breakpoints": true
     }
   ]
 }

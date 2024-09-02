@@ -4,11 +4,22 @@ export type Role = "superAdmin" | "tenant" | "landlord";
 export type DocumentType = "passport" | "citizen" | "id";
 export type SpaceType = "flat" | "room";
 
-export interface signUpReqType{
-    name: string,
-    email:string,
-    hashedPassword:string,
-    address:string
-
+export interface signUpReqType {
+  name: string;
+  email: string;
+  hashedPassword: string;
+  address: string;
 }
+
+export interface addTenantType {
+  fullname: string;
+  permanentaddress: string;
+  document: DocumentType;
+  documentnumber: string;
+  livingspacetype: SpaceType;
+  livingspacenumber: string;
+  generateddocid: string;
+  generatedspaceid: string;
+}
+
 // const { name, email, password, address } = await req.body;
