@@ -37,7 +37,7 @@ const TenantTable = pgTable(
     id: uuid("id").primaryKey().notNull().defaultRandom(),
     fullname: varchar("fullname").notNull(),
     role: roleEnum("role").default("tenant").notNull(),
-    permanentaddress: varchar("address").notNull(),
+    permanentaddress: varchar("permanentaddress").notNull(),
     document: docEnum("document").notNull(),
     documentnumber: varchar("documentnumber").notNull(),
     livingspacetype: spacetypeEnum("livingspacetype").notNull(),
