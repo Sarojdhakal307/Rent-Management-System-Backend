@@ -7,6 +7,8 @@ import {
   signUpHandler,
   logInHandler,
   addtenantHandler,
+  deletetenantHandler,
+  alltenantHandler
 } from "../handlers/userHandlers";
 
 
@@ -17,6 +19,7 @@ userRouter.post("/l/signup-verify", signUpHandler);
 userRouter.post("/l/login", logInHandler);
 
 userRouter.post("/l/addtenant",authmiddleware,addtenantHandler);
+userRouter.get("/l/alltenant",authmiddleware,alltenantHandler);
 
 userRouter.use("/test", authmiddleware, testRouter);
 

@@ -248,7 +248,7 @@ export const addtenantHandler = async (req: Request, res: Response) => {
       livingspacenumber: livingspacenumber as string,
       generateddocid: generateddocid as string,
       generatedspaceid: generatedspaceid as string,
-      landlordid: req.id as string
+      landlordid: req.id as string,
     })
     .returning({
       id: TenantTable.id,
@@ -267,3 +267,36 @@ export const addtenantHandler = async (req: Request, res: Response) => {
   res.end();
   return;
 };
+export const alltenantHandler = async (req: Request, res: Response) => {
+  const Userid = req.id;
+  if (!Userid) {
+    res.status(400);
+    res.json({ err: "unauthorized" });
+    res.end();
+    return;
+  }
+  console.log(Userid);
+  try {
+    const user = await db
+      .select()
+      .from(TenantTable)
+      .where(eq(TenantTable.landlordid, Userid));
+    console.log(user);
+    if (user.length === 0) {
+      res.status(200);
+      res.json({ msg: "You have no tenant" });
+      res.end();
+      return;
+    }
+    res.status(200);
+    res.json({ user });
+    res.end();
+    return;
+  } catch (err) {
+    res.status(500);
+    res.json({ err: "Invalid" });
+    res.end();
+    return;
+  }
+};
+
