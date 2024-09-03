@@ -20,6 +20,7 @@ userRouter.post("/l/login", logInHandler);
 
 userRouter.post("/l/addtenant",authmiddleware,addtenantHandler);
 userRouter.get("/l/alltenant",authmiddleware,alltenantHandler);
+userRouter.post("/l/deletetenant/:id",authmiddleware,deletetenantHandler);
 
 userRouter.use("/test", authmiddleware, testRouter);
 

@@ -300,3 +300,44 @@ export const alltenantHandler = async (req: Request, res: Response) => {
   }
 };
 
+export const deletetenantHandler = async (req: Request, res: Response) => {
+  const Userid = req.params["id"];
+  try {
+    const user = await db
+      .select()
+      .from(TenantTable)
+      .where(eq(TenantTable.generatedspaceid, Userid));
+
+    if (user.length === 0) {
+      res.status(400);
+      res.json({ error: "tenant not exist" });
+      res.end();
+      return;
+    }
+
+    if (user[0].landlordid !== req.id) {
+      res.status(400);
+      res.json({ error: "Unauthorized action!" });
+      res.end();
+      return;
+    }
+    const deletedtenant = await db
+      .delete(TenantTable)
+      .where(eq(TenantTable.generatedspaceid, Userid));
+    console.log(deletedtenant);
+
+    res.status(200);
+    res.json({
+      deletedtenant: "sucess",
+      fullname: user[0].fullname,
+      username: user[0].generatedspaceid,
+    });
+    res.end();
+    return;
+  } catch (err) {
+    res.status(502);
+    res.json({ error: "" });
+    res.end();
+    return;
+  }
+};
