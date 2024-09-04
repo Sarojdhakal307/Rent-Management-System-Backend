@@ -10,6 +10,7 @@ import {
   deletetenantHandler,
   alltenantHandler,
   tenantHandler,
+  changePasswordHandler
 } from "../handlers/userHandlers";
 
 import { authmiddleware } from "./../middlewares/auth";
@@ -17,6 +18,8 @@ import { authmiddleware } from "./../middlewares/auth";
 userRouter.post("/l/signup", signupRequestHandler);
 userRouter.post("/l/signup-verify", signUpHandler);
 userRouter.post("/l/login", logInHandler);
+
+userRouter.put("/l/changepassword",authmiddleware, changePasswordHandler);
 
 userRouter.post("/l/addtenant", authmiddleware, addtenantHandler);
 userRouter.get("/l/alltenant", authmiddleware, alltenantHandler);
