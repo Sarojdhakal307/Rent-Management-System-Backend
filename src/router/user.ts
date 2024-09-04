@@ -8,9 +8,9 @@ import {
   logInHandler,
   addtenantHandler,
   deletetenantHandler,
-  alltenantHandler
+  alltenantHandler,
+  tenantHandler,
 } from "../handlers/userHandlers";
-
 
 import { authmiddleware } from "./../middlewares/auth";
 
@@ -18,9 +18,10 @@ userRouter.post("/l/signup", signupRequestHandler);
 userRouter.post("/l/signup-verify", signUpHandler);
 userRouter.post("/l/login", logInHandler);
 
-userRouter.post("/l/addtenant",authmiddleware,addtenantHandler);
-userRouter.get("/l/alltenant",authmiddleware,alltenantHandler);
-userRouter.post("/l/deletetenant/:id",authmiddleware,deletetenantHandler);
+userRouter.post("/l/addtenant", authmiddleware, addtenantHandler);
+userRouter.get("/l/alltenant", authmiddleware, alltenantHandler);
+userRouter.get("/l/tenant/:id", authmiddleware, tenantHandler);
+userRouter.delete("/l/deletetenant/:id", authmiddleware, deletetenantHandler);
 
 userRouter.use("/test", authmiddleware, testRouter);
 
