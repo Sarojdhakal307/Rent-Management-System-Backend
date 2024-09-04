@@ -87,7 +87,6 @@ export async function signupRequestHandler(req: Request, res: Response) {
     return err;
   }
 }
-
 export async function signUpHandler(req: Request, res: Response) {
   const { otp } = req.body;
   if (!otp) {
@@ -150,7 +149,6 @@ export async function signUpHandler(req: Request, res: Response) {
     return res.json({ error: err });
   }
 }
-
 export async function logInHandler(req: Request, res: Response) {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -183,7 +181,6 @@ export async function logInHandler(req: Request, res: Response) {
     return;
   }
 }
-
 export const addtenantHandler = async (req: Request, res: Response) => {
   const {
     fullname,
@@ -299,7 +296,31 @@ export const alltenantHandler = async (req: Request, res: Response) => {
     return;
   }
 };
+export const tenantHandler = async (req: Request, res: Response) => {
+  const Userid = req.params["id"];
 
+  try {
+    const user = await db
+      .select()
+      .from(TenantTable)
+      .where(eq(TenantTable.generatedspaceid, Userid));
+    if (!user) {
+      res.status(400);
+      res.json({ err: "usernot found" });
+      res.end();
+      return;
+    }
+    res.status(200);
+    res.json({ sucess: true, user });
+    res.end();
+    return;
+  } catch (err) {
+    res.status(500);
+    res.json({ err: err });
+    res.end();
+    return;
+  }
+};
 export const deletetenantHandler = async (req: Request, res: Response) => {
   const Userid = req.params["id"];
   try {
