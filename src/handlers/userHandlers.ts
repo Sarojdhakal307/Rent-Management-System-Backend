@@ -181,6 +181,69 @@ export async function logInHandler(req: Request, res: Response) {
     return;
   }
 }
+export async function changePasswordHandler(req: Request, res: Response) {
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword || !newPassword) {
+    res.status(400);
+    res.json({ err: "Invalid required parameters" });
+    res.end();
+    return;
+  }
+  const UserId = req.id;
+  if (!UserId) {
+    res.status(400);
+    res.json({ err: "Unauthorized" });
+    res.end();
+    return;
+  }
+  
+  try {
+    const user = await db
+      .selectDistinct()
+      .from(LandlordTable)
+      .where(eq(LandlordTable.id, UserId));
+    // const HashedOldPassword = await Has
+    if (user.length === 0) {
+      res.status(404);
+      res.json({ err: "Unauthorized" });
+      res.end();
+      return;
+    }
+    // console.log(user)
+    const passFlag = await comparePassword(oldPassword, user[0].password);
+    if (!passFlag) {
+      res.status(400);
+      res.json({ err: "Invalid oldPassword" });
+      res.end();
+      return;
+    }
+    if(oldPassword===newPassword) {
+      res.status(400);
+      res.json({ err: "Newpassword and Oldpassword cant be same!" });
+      res.end();
+      return;
+    }
+    const hashedPassword = await hashPassword(newPassword);
+    if (!hashedPassword) {
+      res.status(400);
+      res.end();
+      return;
+    }
+    const updatedUser = await db
+      .update(LandlordTable)
+      .set({ password: hashedPassword })
+      .where(eq(LandlordTable.id, UserId)).
+      returning({ updatedId: LandlordTable.id})
+
+    res.status(201);
+    res.json({ updated: "sucess", updatedUser });
+  } catch (err) {
+    res.status(400);
+    res.json({ err: err });
+    res.end();
+    return;
+  }
+}
 export const addtenantHandler = async (req: Request, res: Response) => {
   const {
     fullname,
@@ -304,7 +367,7 @@ export const tenantHandler = async (req: Request, res: Response) => {
       .select()
       .from(TenantTable)
       .where(eq(TenantTable.generatedspaceid, Userid));
-    if (!user) {
+    if (user.length === 0) {
       res.status(400);
       res.json({ err: "usernot found" });
       res.end();
@@ -321,6 +384,29 @@ export const tenantHandler = async (req: Request, res: Response) => {
     return;
   }
 };
+// export const updatetenantHandler=async(req:Request,res:Response)=>{
+//   const Userid = req.params["id"];
+
+//   try {
+//     const user = await db
+//       .selectDistinct()
+//       .from(TenantTable)
+//       .where(eq(TenantTable.generatedspaceid, Userid));
+//     if (user.length === 0) {
+//       res.status(400);
+//       res.json({ err: "usernot found" });
+//       res.end();
+//       return;
+//     };
+//     res.json({ user });
+
+//     return;
+
+// }
+// catch(err){
+
+// }};
+
 export const deletetenantHandler = async (req: Request, res: Response) => {
   const Userid = req.params["id"];
   try {
