@@ -14,7 +14,13 @@ import {
   jwtverify_OTP,
 } from "../lib/auth";
 
-import { addTenantType, Role, DocumentType, SpaceType } from "./../types";
+import {
+  addTenantType,
+  Role,
+  DocumentType,
+  SpaceType,
+  UserPayload_token,
+} from "./../types";
 import { transporter, signUpMailOTP, generateOTP } from "../lib/mailServices";
 import { generateddocId, generatespaceId } from "../lib/lib";
 
@@ -139,8 +145,14 @@ export async function signUpHandler(req: Request, res: Response) {
       })
       .returning({
         id: LandlordTable.id,
+        role: LandlordTable.role,
       });
-    const token = await jwtgenerate(user[0].id);
+    const obj_payload: UserPayload_token = {
+      id: user[0].id,
+      role: user[0].role,
+    };
+    const token = await jwtgenerate(obj_payload);
+    // const token = await jwtgenerate({user[0].id, user[0].role});
 
     res.cookie("Token", token);
     res.json({ signup: true, token: token });
@@ -171,8 +183,11 @@ export async function logInHandler(req: Request, res: Response) {
       res.end();
       return;
     }
-
-    const token = await jwtgenerate(user[0].id);
+    const obj_payload: UserPayload_token = {
+      id: user[0].id,
+      role: user[0].role,
+    };
+    const token = await jwtgenerate(obj_payload);
     res.cookie("Token", token);
     res.status(200).json({ login: "sucess", token: token });
     return;
@@ -196,7 +211,7 @@ export async function changePasswordHandler(req: Request, res: Response) {
     res.end();
     return;
   }
-  
+
   try {
     const user = await db
       .selectDistinct()
@@ -217,7 +232,7 @@ export async function changePasswordHandler(req: Request, res: Response) {
       res.end();
       return;
     }
-    if(oldPassword===newPassword) {
+    if (oldPassword === newPassword) {
       res.status(400);
       res.json({ err: "Newpassword and Oldpassword cant be same!" });
       res.end();
@@ -232,8 +247,8 @@ export async function changePasswordHandler(req: Request, res: Response) {
     const updatedUser = await db
       .update(LandlordTable)
       .set({ password: hashedPassword })
-      .where(eq(LandlordTable.id, UserId)).
-      returning({ updatedId: LandlordTable.id})
+      .where(eq(LandlordTable.id, UserId))
+      .returning({ updatedId: LandlordTable.id });
 
     res.status(201);
     res.json({ updated: "sucess", updatedUser });

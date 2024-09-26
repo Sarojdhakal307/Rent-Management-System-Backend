@@ -21,5 +21,10 @@ export interface addTenantType {
   generateddocid: string;
   generatedspaceid: string;
 }
+export interface UserPayload_token  {
+  id: string | number;
+  role: Role;
+};
+
 
 // const { name, email, password, address } = await req.body;
