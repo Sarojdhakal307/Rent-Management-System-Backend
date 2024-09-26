@@ -13,10 +13,7 @@ import {
   changePasswordHandler,
 } from "../handlers/userHandlers";
 
-import {
-  authmiddleware,
-  role_landlord_authMiddleware,
-} from "./../middlewares/auth";
+import { authmiddleware, landlordMiddleware } from "./../middlewares/auth";
 
 userRouter.post("/l/signup", signupRequestHandler);
 userRouter.post("/l/signup-verify", signUpHandler);
@@ -25,32 +22,32 @@ userRouter.post("/l/login", logInHandler);
 userRouter.put(
   "/l/changepassword",
   authmiddleware,
-  role_landlord_authMiddleware,
+  landlordMiddleware,
   changePasswordHandler
 );
 
 userRouter.post(
   "/l/addtenant",
   authmiddleware,
-  role_landlord_authMiddleware,
+  landlordMiddleware,
   addtenantHandler
 );
 userRouter.get(
   "/l/alltenant",
   authmiddleware,
-  role_landlord_authMiddleware,
+  landlordMiddleware,
   alltenantHandler
 );
 userRouter.get(
   "/l/tenant/:id",
   authmiddleware,
-  role_landlord_authMiddleware,
+  landlordMiddleware,
   tenantHandler
 );
 userRouter.delete(
   "/l/deletetenant/:id",
   authmiddleware,
-  role_landlord_authMiddleware,
+  landlordMiddleware,
   deletetenantHandler
 );
 
