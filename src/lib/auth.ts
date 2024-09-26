@@ -1,7 +1,7 @@
 import "dotenv/config";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { signUpReqType } from "../types";
+import { signUpReqType,UserPayload_token } from "../types";
 
 require("dotenv").config();
 
@@ -22,19 +22,19 @@ export const comparePassword = async (
   return (await bcrypt.compare(password, hashedpassword)) as boolean;
 };
 
-export const jwtgenerate = async (id: string) => {
+export const jwtgenerate = async (obj:any) => {
   if (!process.env.JWT_KEY) {
     console.log("Invalide JWT_KEY");
     return;
   }
-  return (await jwt.sign(id, process.env.JWT_KEY)) as string;
+  return (await jwt.sign(obj, process.env.JWT_KEY)) as string;
 };
 
-export const jwtverify = async (token: string) => {
+export const jwtverify  = async (token: string): Promise<UserPayload_token | undefined>=>{
   if (!process.env.JWT_KEY) {
     return;
   }
-  return await jwt.verify(token, process.env.JWT_KEY);
+  return await jwt.verify(token, process.env.JWT_KEY) as UserPayload_token;
 };
 
 export const jwtgenerateSignUptToken = async (payload: signUpReqType) => {
