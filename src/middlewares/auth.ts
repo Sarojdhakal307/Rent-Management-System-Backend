@@ -5,6 +5,10 @@ import { stringify } from "querystring";
 // interface CustomRequest extends Request {
 //     id: string;
 //   }
+interface CustomRequest extends Request {
+  role?: string;
+  id?: string;
+}
 import {
   addTenantType,
   Role,
@@ -14,7 +18,7 @@ import {
 } from "./../types";
 
 export const authmiddleware = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -26,15 +30,22 @@ export const authmiddleware = async (
     return;
   }
   try {
-    const obj_payload : UserPayload_token = await jwtverify(token);
-    console.log(obj_payload);
+    const obj_payload: UserPayload_token | undefined | null = await jwtverify(
+      token
+    );
+    if (obj_payload === undefined) {
+      res.status(403).json({ err: "Invalid signature" });
+      res.end();
+      return;
+    }
+    // console.log(obj_payload);
     // console.log(typeof(req.id))   //stringF
     if (!obj_payload.id) {
       res.status(403).json({ err: "Invalid signature" });
       res.end();
       return;
     }
-    req.id  = obj_payload.id;
+    req.id = obj_payload.id;
   } catch (er) {
     res.status(403).json({ err: "Invalid signature" });
     res.end();
@@ -44,7 +55,7 @@ export const authmiddleware = async (
   next();
 };
 export const role_landlord_authMiddleware = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -56,20 +67,27 @@ export const role_landlord_authMiddleware = async (
     return;
   }
   try {
-    const obj_payload : UserPayload_token = await jwtverify(token);
-    console.log(obj_payload);
+    const obj_payload: UserPayload_token | undefined | null = await jwtverify(
+      token
+    );
+    // console.log(obj_payload);
     // console.log(typeof(req.id))   //stringF
+    if (obj_payload === undefined) {
+      res.status(403).json({ err: "Invalid signature" });
+      res.end();
+      return;
+    }
     if (!obj_payload.role) {
       res.status(403).json({ err: "Invalid signature" });
       res.end();
       return;
     }
-    if (obj_payload.role !== 'landlord') {
+    if (obj_payload.role !== "landlord") {
       res.status(404).json({ err: "Invalid signature" });
       res.end();
       return;
     }
-    req.role  = obj_payload.role;
+    req.role = obj_payload.role;
   } catch (er) {
     res.status(405).json({ err: "Invalid signature" });
     res.end();

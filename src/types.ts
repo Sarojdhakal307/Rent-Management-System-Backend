@@ -22,8 +22,9 @@ export interface addTenantType {
   generatedspaceid: string;
 }
 export interface UserPayload_token  {
-  id: string | number;
+  id: string ;
   role: Role;
+  
 };
 
 
