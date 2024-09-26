@@ -54,7 +54,7 @@ export const authmiddleware = async (
 
   next();
 };
-export const role_landlord_authMiddleware = async (
+export const landlordMiddleware = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction
