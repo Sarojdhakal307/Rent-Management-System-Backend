@@ -13,7 +13,7 @@ import {
   changePasswordHandler
 } from "../handlers/userHandlers";
 
-import { authmiddleware } from "./../middlewares/auth";
+import { authmiddleware, landlordMiddleware } from "./../middlewares/auth";
 
 userRouter.post("/l/signup", signupRequestHandler);
 userRouter.post("/l/signup-verify", signUpHandler);
