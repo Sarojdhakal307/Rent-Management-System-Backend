@@ -146,6 +146,7 @@ export async function signUpHandler(req: Request, res: Response) {
       .returning({
         id: LandlordTable.id,
         role: LandlordTable.role,
+        username: LandlordTable.username,
       });
     const obj_payload: UserPayload_token = {
       id: user[0].id,
@@ -155,7 +156,7 @@ export async function signUpHandler(req: Request, res: Response) {
     // const token = await jwtgenerate({user[0].id, user[0].role});
 
     res.cookie("Token", token);
-    res.json({ signup: true, token: token });
+    res.json({ signup: true, token: token, username: user[0].username });
   } catch (err) {
     console.log(err);
     return res.json({ error: err });
@@ -211,7 +212,7 @@ export async function changePasswordHandler(req: Request, res: Response) {
     res.end();
     return;
   }
-  
+
   try {
     const user = await db
       .selectDistinct()
@@ -232,7 +233,7 @@ export async function changePasswordHandler(req: Request, res: Response) {
       res.end();
       return;
     }
-    if(oldPassword===newPassword) {
+    if (oldPassword === newPassword) {
       res.status(400);
       res.json({ err: "Newpassword and Oldpassword cant be same!" });
       res.end();
@@ -247,8 +248,8 @@ export async function changePasswordHandler(req: Request, res: Response) {
     const updatedUser = await db
       .update(LandlordTable)
       .set({ password: hashedPassword })
-      .where(eq(LandlordTable.id, UserId)).
-      returning({ updatedId: LandlordTable.id})
+      .where(eq(LandlordTable.id, UserId))
+      .returning({ updatedId: LandlordTable.id });
 
     res.status(201);
     res.json({ updated: "sucess", updatedUser });
@@ -459,6 +460,67 @@ export const deletetenantHandler = async (req: Request, res: Response) => {
   } catch (err) {
     res.status(502);
     res.json({ error: "" });
+    res.end();
+    return;
+  }
+};
+
+//tenantHandlers
+
+export const logInTenantHandler = async (req: Request, res: Response) => {
+  const { landlordUsername, spaceId, docId } = req.body;
+  if (!landlordUsername && !spaceId && !docId) {
+    res.status(403);
+    res.json({ err: "Missing required parameter" });
+    res.end();
+    return;
+  }
+  try {
+    const landLord = await db
+      .select()
+      .from(LandlordTable)
+      .where(eq(LandlordTable.username, landlordUsername));
+    if (!landLord.length) {
+      res.status(400);
+      res.json({ err: "Invalid LandlordUsername" });
+      res.end();
+      return;
+    }
+    // console.log(landLord);
+    const tenants = await db
+      .select()
+      .from(TenantTable)
+      .where(eq(TenantTable.landlordid, landLord[0].id));
+      // console.log("tenants: " , tenants);
+    if (!tenants.length) {
+      res.status(400);
+      res.json({ err: "invalid Tenant with this landlord" });
+      res.end();
+      return;
+    }   
+    const userTenant = tenants.find((tenant) => {
+      return tenant.generatedspaceid === spaceId && tenant.generateddocid === docId;
+    });
+    // console.log(userTenant);
+
+    if (!userTenant) {
+      res.status(400);
+      res.json({ err: "invalid Tenant with this landlord" });
+      res.end();
+      return;
+    }
+
+    const tenantPayload: UserPayload_token = {
+      id: userTenant.id,
+      role: userTenant.role,
+    };
+    const token = await jwtgenerate(tenantPayload);
+    res.cookie("Token", token);
+    res.status(200).json({ login: "sucess", token: token });
+    res.end();
+    return;
+  } catch (err) {
+    res.status(501).json({ err: "Invalid Email" });
     res.end();
     return;
   }
