@@ -12,7 +12,7 @@ import {
   tenantHandler,
   changePasswordHandler,
   logInTenantHandler,       //Tenant Handler
-  // tenantprofileHandler,
+  tenantprofileHandler,
 } from "../handlers/userHandlers";
 
 import { authmiddlewarelandlord, authmiddlewaretenant } from "./../middlewares/auth";
@@ -29,6 +29,7 @@ userRouter.delete("/l/deletetenant/:id", authmiddlewarelandlord, deletetenantHan
 
 
 userRouter.post("/t/login", logInTenantHandler);
+userRouter.get("/t/myprofile",authmiddlewaretenant, tenantprofileHandler);
 
 
 
