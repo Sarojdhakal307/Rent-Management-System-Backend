@@ -1,10 +1,10 @@
 import express, { Request, Response } from "express";
-import { authmiddleware } from "../middlewares/auth";
+import { authmiddlewarelandlord, authmiddlewaretenant } from "../middlewares/auth";
 
 
 const testRouter = express();
 
-testRouter.get("/", authmiddleware, async (req: Request, res: Response) => {
+testRouter.get("/", authmiddlewaretenant, async (req: Request, res: Response) => {
   console.log("i am test");
 
   res.json({ Route: "test" });

@@ -491,15 +491,17 @@ export const logInTenantHandler = async (req: Request, res: Response) => {
       .select()
       .from(TenantTable)
       .where(eq(TenantTable.landlordid, landLord[0].id));
-      // console.log("tenants: " , tenants);
+    // console.log("tenants: " , tenants);
     if (!tenants.length) {
       res.status(400);
       res.json({ err: "invalid Tenant with this landlord" });
       res.end();
       return;
-    }   
+    }
     const userTenant = tenants.find((tenant) => {
-      return tenant.generatedspaceid === spaceId && tenant.generateddocid === docId;
+      return (
+        tenant.generatedspaceid === spaceId && tenant.generateddocid === docId
+      );
     });
     // console.log(userTenant);
 
@@ -524,4 +526,29 @@ export const logInTenantHandler = async (req: Request, res: Response) => {
     res.end();
     return;
   }
+};
+
+export const tenantprofileHandler = async (req: Request, res: Response) => {
+  const userId = req?.id;
+  if (!userId) {
+    res.status(501).json({ err: "Invalid User" });
+    res.end();
+    return;
+  }
+  const user = await db
+    .select()
+    .from(TenantTable)
+    .where(eq(TenantTable.id, userId));
+
+  if (user.length === 0) {
+    res.status(501).json({ err: "Invalid User" });
+    res.end();
+    return;
+  }
+  const { id, landlordid, createdAt, ...filteredTenant } = user[0];
+
+  // console.log(filteredTenant);
+  res.status(501).json({ userinfo: filteredTenant });
+  res.end();
+  return;
 };
