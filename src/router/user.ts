@@ -12,25 +12,26 @@ import {
   tenantHandler,
   changePasswordHandler,
   logInTenantHandler,       //Tenant Handler
+  // tenantprofileHandler,
 } from "../handlers/userHandlers";
 
-import { authmiddleware, landlordMiddleware } from "./../middlewares/auth";
+import { authmiddlewarelandlord, authmiddlewaretenant } from "./../middlewares/auth";
 
 userRouter.post("/l/signup", signupRequestHandler);
 userRouter.post("/l/signup-verify", signUpHandler);
 userRouter.post("/l/login", logInHandler);
 
-userRouter.put("/l/changepassword", authmiddleware, changePasswordHandler);
-userRouter.post("/l/addtenant", authmiddleware, addtenantHandler);
-userRouter.get("/l/alltenant", authmiddleware, alltenantHandler);
-userRouter.get("/l/tenant/:id", authmiddleware, tenantHandler);
-userRouter.delete("/l/deletetenant/:id", authmiddleware, deletetenantHandler);
+userRouter.put("/l/changepassword", authmiddlewarelandlord, changePasswordHandler);
+userRouter.post("/l/addtenant", authmiddlewarelandlord, addtenantHandler);
+userRouter.get("/l/alltenant", authmiddlewarelandlord, alltenantHandler);
+userRouter.get("/l/tenant/:id", authmiddlewarelandlord, tenantHandler);
+userRouter.delete("/l/deletetenant/:id", authmiddlewarelandlord, deletetenantHandler);
 
 
 userRouter.post("/t/login", logInTenantHandler);
 
 
 
-userRouter.use("/test", authmiddleware, testRouter);
+userRouter.use("/test", testRouter);
 
 export { userRouter };
