@@ -39,7 +39,9 @@ export async function signupRequestHandler(req: Request, res: Response) {
   try {
     const validMailFlag = validator.isEmail(email); //formate validation
     if (!validMailFlag) {
-      return res.status(400).json({ error: "Invalid email format" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid email format" });
     }
     const user = await db
       .select()
@@ -48,7 +50,7 @@ export async function signupRequestHandler(req: Request, res: Response) {
 
     if (user.length !== 0) {
       res.status(401);
-      res.json({ err: "User already exist" });
+      res.json({ success: false, message: "User already exist" });
       res.end();
       return;
     }
@@ -56,8 +58,9 @@ export async function signupRequestHandler(req: Request, res: Response) {
     // console.log("ValidMailFlag : ", validMailFlag);
     const hashedPassword = await hashPassword(password);
     if (!hashedPassword) {
+      console.log({ message: "passwordHash invalid err" });
       res.status(404);
-      res.json({ err: "passwordHashinv err" });
+      res.json({ success: false, message: "Try Again" });
       res.end();
       return;
     }
@@ -71,11 +74,11 @@ export async function signupRequestHandler(req: Request, res: Response) {
     const { signupOTP_MailOptions, OTP } = await signUpMailOTP(email, name);
 
     const payloadToken = await jwtgenerateSignUptToken(payload);
-    const otpToken = await jwtgenerate_OTP(OTP.toString());
+    const otpToken = await hashPassword(OTP.toString());
 
     transporter.sendMail(signupOTP_MailOptions, function (error, info) {
       if (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({ success: false, message: error.message });
       }
 
       res.cookie("payloadToken", payloadToken, { maxAge: 300000 }); // 300 seconds
@@ -108,20 +111,16 @@ export async function signUpHandler(req: Request, res: Response) {
 
   if (!payloadToken || !otpToken) {
     res.status(401);
+    res.json({ success: false, message: "try again" });
     return;
   }
   try {
-    const generatedOtp = await jwtverify_OTP(otpToken);
-    if (!generatedOtp) {
-      res.status(401);
-      res.json({ err: "otpvalidation err" });
-      res.end();
-      return;
-    }
-    if (generatedOtp !== otp) {
+    const istrueOTP = await comparePassword(otp, otpToken);
+    if (!istrueOTP) {
       res.status(404);
       res.json({
-        err: "Incorrect OTP provided",
+        success: false,
+        message: "Incorrect OTP provided",
       });
       res.end();
       return;
@@ -129,7 +128,7 @@ export async function signUpHandler(req: Request, res: Response) {
     const new_User = await jwtverifySignUptToken(payloadToken);
     if (!new_User) {
       res.status(500);
-      res.json({ err: "verification err" });
+      res.json({ success: false, message: "verification error" });
       res.end();
       return;
     }
@@ -156,10 +155,13 @@ export async function signUpHandler(req: Request, res: Response) {
     // const token = await jwtgenerate({user[0].id, user[0].role});
 
     res.cookie("Token", token);
-    res.json({ signup: true, token: token, username: user[0].username });
+    res.json({
+      success: true,
+      message: { token: token, username: user[0].username },
+    });
   } catch (err) {
     console.log(err);
-    return res.json({ error: err });
+    return res.json({ success: false, message: err });
   }
 }
 export async function logInHandler(req: Request, res: Response) {
