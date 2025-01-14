@@ -2,12 +2,20 @@ import dotenv from "dotenv";
 import express from "express";
 import { mainRouter } from "./router";
 import cluster from "cluster";
+import cors  from "cors";
 const numCPUs = require("node:os").availableParallelism();
 dotenv.config();
 
-const PORT = process.env.PORT ;
+const PORT = process.env.PORT;
 
 const app = express();
+
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -18,10 +26,9 @@ if (cluster.isPrimary) {
     cluster.fork();
   }
 } else {
-
-  app.use("/", mainRouter)
+  app.use("/", mainRouter);
 
   app.listen(PORT, () => {
-      console.log("surver Started at : ", PORT);
-    });
+    console.log("surver Started at : ", PORT);
+  });
 }
