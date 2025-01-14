@@ -34,7 +34,9 @@ export async function signupRequestHandler(req: Request, res: Response) {
   const { name, email, password, address } = await req.body;
 
   if (!name || !email || !password || !address) {
-    return res.status(401).json({ error: "Missing required parameter" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Missing required parameter" });
   }
   try {
     const validMailFlag = validator.isEmail(email); //formate validation
@@ -84,14 +86,16 @@ export async function signupRequestHandler(req: Request, res: Response) {
       res.cookie("payloadToken", payloadToken, { maxAge: 300000 }); // 300 seconds
       res.cookie("otpToken", otpToken, { maxAge: 300000 });
       return res.status(201).json({
-        signUpRequest: "success",
-        payloadToken,
-        otpToken,
+        success: true,
+        message: {
+          payloadToken: payloadToken,
+          otpToken: otpToken,
+        },
       });
     });
   } catch (err) {
     res.status(500);
-    res.json(err);
+    res.json({ success: false, message: err });
     res.end();
     return err;
   }
