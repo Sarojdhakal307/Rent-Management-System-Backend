@@ -26,7 +26,7 @@ if (cluster.isPrimary) {
     cluster.fork();
   }
 } else {
-  app.use("/", mainRouter);
+  app.use("/api", mainRouter);
 
   app.listen(PORT, () => {
     console.log("surver Started at : ", PORT);

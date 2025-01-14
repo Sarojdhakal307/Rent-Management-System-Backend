@@ -13,6 +13,7 @@ import {
   changePasswordHandler,
   logInTenantHandler,       //Tenant Handler
   tenantprofileHandler,
+  islogedinLandlord,
 } from "../handlers/userHandlers";
 
 import { authmiddlewarelandlord, authmiddlewaretenant } from "./../middlewares/auth";
@@ -20,6 +21,7 @@ import { authmiddlewarelandlord, authmiddlewaretenant } from "./../middlewares/a
 userRouter.post("/l/signup", signupRequestHandler);
 userRouter.post("/l/signup-verify", signUpHandler);
 userRouter.post("/l/login", logInHandler);
+userRouter.post("/l/isLogedin", islogedinLandlord);
 
 userRouter.put("/l/changepassword", authmiddlewarelandlord, changePasswordHandler);
 userRouter.post("/l/addtenant", authmiddlewarelandlord, addtenantHandler);
