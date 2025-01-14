@@ -17,11 +17,11 @@ import {
 } from "../handlers/userHandlers";
 
 import { authmiddlewarelandlord, authmiddlewaretenant } from "./../middlewares/auth";
-
+//api/user/
 userRouter.post("/l/signup", signupRequestHandler);
 userRouter.post("/l/signup-verify", signUpHandler);
 userRouter.post("/l/login", logInHandler);
-userRouter.post("/l/isLogedin", islogedinLandlord);
+userRouter.get("/l/isLogedin", islogedinLandlord);
 
 userRouter.put("/l/changepassword", authmiddlewarelandlord, changePasswordHandler);
 userRouter.post("/l/addtenant", authmiddlewarelandlord, addtenantHandler);
