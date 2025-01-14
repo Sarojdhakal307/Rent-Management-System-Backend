@@ -558,3 +558,46 @@ export const tenantprofileHandler = async (req: Request, res: Response) => {
   res.end();
   return;
 };
+
+export const islogedinLandlord = async (req: Request, res: Response) => {
+  const token: string | undefined = req.cookies.Token;
+  if (!token) {
+    res.status(403).json({ success: false, message: "Invalid signature" });
+    res.end();
+    return;
+  }
+  try {
+    const obj_payload: UserPayload_token | undefined | null = await jwtverify(
+      token
+    );
+    if (obj_payload === undefined || !obj_payload.id) {
+      res.status(403).json({ success: false, message: "Invalid signature" });
+      res.end();
+      return;
+    }
+    // console.log(obj_payload);
+    // console.log(typeof(req.id))
+    const user = await db
+      .select()
+      .from(LandlordTable)
+      .where(eq(LandlordTable.id, obj_payload.id));
+
+    if (
+      user.length === 0 ||
+      !obj_payload.role ||
+      obj_payload.role !== "landlord"
+    ) {
+      res.status(404).json({ success: false, message: "Invalid signature" });
+      res.end();
+      return;
+    }
+    res.status(200).json({ success: true, message: "landlord" });
+    res.end();
+    return;
+  } catch (err) {
+    console.log({ error: err });
+    res.status(403).json({ success: false, message: "Invalid signature" });
+    res.end();
+    return;
+  }
+};
