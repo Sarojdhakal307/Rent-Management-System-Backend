@@ -78,22 +78,20 @@ export async function signupRequestHandler(req: Request, res: Response) {
     const payloadToken = await jwtgenerateSignUptToken(payload);
     const otpToken = await hashPassword(OTP.toString());
 
-    transporter.sendMail(signupOTP_MailOptions, function (error, info) {
-      if (error) {
-        return res.status(500).json({ success: false, message: error.message });
-      }
+    transporter.sendMail(signupOTP_MailOptions);
 
-      res.cookie("payloadToken", payloadToken, { maxAge: 300000 }); // 300 seconds
-      res.cookie("otpToken", otpToken, { maxAge: 300000 });
-      return res.status(201).json({
-        success: true,
-        message: {
-          payloadToken: payloadToken,
-          otpToken: otpToken,
-        },
-      });
+
+    res.cookie("payloadToken", payloadToken, { maxAge: 300000 }); // 300 seconds
+    res.cookie("otpToken", otpToken, { maxAge: 300000 });
+    return res.status(201).json({
+      success: true,
+      message: {
+        payloadToken: payloadToken,
+        otpToken: otpToken,
+      },
     });
   } catch (err) {
+    console.log("err:", err);
     res.status(500);
     res.json({ success: false, message: err });
     res.end();
@@ -595,7 +593,7 @@ export const islogedinLandlord = async (req: Request, res: Response) => {
     res.end();
     return;
   } catch (err) {
-    console.log({ error: err });
+    // console.log({ error: err });
     res.status(403).json({ success: false, message: "Invalid signature" });
     res.end();
     return;
