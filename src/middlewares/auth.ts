@@ -30,7 +30,7 @@ export const authmiddlewarelandlord = async (
   // const token: string | undefined = req.headers.authorization;
   const token: string | undefined = req.cookies.Token;
   if (!token) {
-    res.status(403).json({ err: "unauthorized" });
+    res.status(403).json({ success: false, message: "unauthorized" });
     res.end();
     return;
   }
@@ -39,14 +39,14 @@ export const authmiddlewarelandlord = async (
       token
     );
     if (obj_payload === undefined) {
-      res.status(403).json({ err: "Invalid signature" });
+      res.status(403).json({success: false, message: "Invalid signature" });
       res.end();
       return;
     }
     // console.log(obj_payload);
     // console.log(typeof(req.id))   //stringF
     if (!obj_payload.id) {
-      res.status(403).json({ err: "Invalid signature" });
+      res.status(403).json({success: false, message: "Invalid signature" });
       res.end();
       return;
     }
@@ -58,18 +58,18 @@ export const authmiddlewarelandlord = async (
 
     if (user.length === 0) {
       res.status(400);
-      res.json({ err: "Unauthorized token!" });
+      res.json({success: false, message: "Unauthorized token!" });
       res.end();
       return;
     }
   //**
     if (!obj_payload.role) {
-      res.status(403).json({ err: "Invalid signature" });
+      res.status(403).json({ success: false, message: "Invalid signature" });
       res.end();
       return;
     }
     if (obj_payload.role !== "landlord") {
-      res.status(404).json({ err: "Invalid signature" });
+      res.status(404).json({success: false, message: "Invalid signature" });
       res.end();
       return;
     }
@@ -77,7 +77,7 @@ export const authmiddlewarelandlord = async (
   // ** 
     req.id = obj_payload.id;
   } catch (er) {
-    res.status(403).json({ err: "Invalid signature" });
+    res.status(403).json({success: false, message: "Invalid signature" });
     res.end();
     return;
   }
@@ -135,7 +135,7 @@ export const authmiddlewaretenant = async (
   // const token: string | undefined = req.headers.authorization;
   const token: string | undefined = req.cookies.Token;
   if (!token) {
-    res.status(403).json({ err: "unauthorized" });
+    res.status(403).json({ success: false, message: "unauthorized" });
     res.end();
     return;
   }
@@ -144,14 +144,14 @@ export const authmiddlewaretenant = async (
       token
     );
     if (obj_payload === undefined) {
-      res.status(403).json({ err: "Invalid signature" });
+      res.status(403).json({success: false, message: "Invalid signature" });
       res.end();
       return;
     }
     // console.log(obj_payload);
     // console.log(typeof(req.id))   //stringF
     if (!obj_payload.id) {
-      res.status(403).json({ err: "Invalid signature" });
+      res.status(403).json({success: false, message: "Invalid signature" });
       res.end();
       return;
     }
@@ -163,18 +163,18 @@ export const authmiddlewaretenant = async (
 
     if (user.length === 0) {
       res.status(400);
-      res.json({ err: "Unauthorized token!" });
+      res.json({success: false, message: "Unauthorized token!" });
       res.end();
       return;
     }
 
     if (!obj_payload.role) {
-      res.status(403).json({ err: "Invalid signature" });
+      res.status(403).json({success: false, message: "Invalid signature" });
       res.end();
       return;
     }
     if (obj_payload.role !== "tenant") {
-      res.status(404).json({ err: "Invalid signature" });
+      res.status(404).json({success: false, message: "Invalid signature" });
       res.end();
       return;
     }
@@ -183,11 +183,10 @@ export const authmiddlewaretenant = async (
     req.role = obj_payload.role;
 
   } catch (er) {
-    res.status(403).json({ err: "Invalid signature" });
+    res.status(403).json({ success: false, message: "Invalid signature" });
     res.end();
     return;
   }
-
   next();
 };
 
