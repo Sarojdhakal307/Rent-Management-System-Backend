@@ -80,7 +80,6 @@ export async function signupRequestHandler(req: Request, res: Response) {
 
     transporter.sendMail(signupOTP_MailOptions);
 
-
     res.cookie("payloadToken", payloadToken, { maxAge: 300000 }); // 300 seconds
     res.cookie("otpToken", otpToken, { maxAge: 300000 });
     return res.status(201).json({
@@ -170,7 +169,7 @@ export async function logInHandler(req: Request, res: Response) {
   const { email, password } = req.body;
   if (!email || !password) {
     res.status(403);
-    res.json({ err: "Missing required parameter" });
+    res.json({ success: false, message: "Missing required parameter" });
     res.end();
     return;
   }
@@ -184,7 +183,7 @@ export async function logInHandler(req: Request, res: Response) {
 
     if (!userAccess) {
       res.status(400);
-      res.json({ err: "Invalid password" });
+      res.json({ success: false, message: "Invalid password" });
       res.end();
       return;
     }
@@ -194,10 +193,10 @@ export async function logInHandler(req: Request, res: Response) {
     };
     const token = await jwtgenerate(obj_payload);
     res.cookie("Token", token);
-    res.status(200).json({ login: "sucess", token: token });
+    res.status(200).json({ success: true, message: { token: token } });
     return;
   } catch (err) {
-    res.status(501).json({ err: "Invalid Email" });
+    res.status(501).json({ success: false, message: "Invalid Email" });
     return;
   }
 }
@@ -205,14 +204,14 @@ export async function changePasswordHandler(req: Request, res: Response) {
   const { oldPassword, newPassword } = req.body;
   if (!oldPassword || !newPassword) {
     res.status(400);
-    res.json({ err: "Invalid required parameters" });
+    res.json({ success: false, message: "Invalid required parameters" });
     res.end();
     return;
   }
   const UserId = req.id;
   if (!UserId) {
     res.status(400);
-    res.json({ err: "Unauthorized" });
+    res.json({ success: false, message: "Unauthorized" });
     res.end();
     return;
   }
@@ -225,7 +224,7 @@ export async function changePasswordHandler(req: Request, res: Response) {
     // const HashedOldPassword = await Has
     if (user.length === 0) {
       res.status(404);
-      res.json({ err: "Unauthorized" });
+      res.json({ success: false, message: "Unauthorized" });
       res.end();
       return;
     }
@@ -233,19 +232,23 @@ export async function changePasswordHandler(req: Request, res: Response) {
     const passFlag = await comparePassword(oldPassword, user[0].password);
     if (!passFlag) {
       res.status(400);
-      res.json({ err: "Invalid oldPassword" });
+      res.json({ success: false, message: "Invalid oldPassword" });
       res.end();
       return;
     }
     if (oldPassword === newPassword) {
       res.status(400);
-      res.json({ err: "Newpassword and Oldpassword cant be same!" });
+      res.json({
+        success: false,
+        message: "Newpassword and Oldpassword cant be same!",
+      });
       res.end();
       return;
     }
     const hashedPassword = await hashPassword(newPassword);
     if (!hashedPassword) {
       res.status(400);
+      res.json({ success: false, message: "something wrong" });
       res.end();
       return;
     }
@@ -256,10 +259,10 @@ export async function changePasswordHandler(req: Request, res: Response) {
       .returning({ updatedId: LandlordTable.id });
 
     res.status(201);
-    res.json({ updated: "sucess", updatedUser });
+    res.json({ success: true, message: "Password updated successfully." });
   } catch (err) {
     res.status(400);
-    res.json({ err: err });
+    res.json({ success: false, message: err });
     res.end();
     return;
   }
@@ -282,70 +285,79 @@ export const addtenantHandler = async (req: Request, res: Response) => {
     !livingspacenumber
   ) {
     res.status(404);
-    res.json({ error: "invalid requires parameter" });
+    res.json({ success: false, message: "invalid requires parameter" });
     res.end();
     return;
   }
-  const generatedspaceid = await generatespaceId(
-    livingspacetype,
-    livingspacenumber
-  );
-  const generateddocid = await generateddocId(document, documentnumber);
-
-  const tenantsData = await db
-    .select()
-    .from(TenantTable)
-    .where(
-      sql`${TenantTable.generateddocid} = ${generateddocid} AND ${TenantTable.generatedspaceid} = ${generatedspaceid}`
+  try {
+    const generatedspaceid = await generatespaceId(
+      livingspacetype,
+      livingspacenumber
     );
+    const generateddocid = await generateddocId(document, documentnumber);
 
-  if (tenantsData.length !== 0) {
-    res.status(404);
-    res.json({ error: "Duplicate information " });
+    const tenantsData = await db
+      .select()
+      .from(TenantTable)
+      .where(
+        sql`${TenantTable.generateddocid} = ${generateddocid} AND ${TenantTable.generatedspaceid} = ${generatedspaceid}`
+      );
+
+    if (tenantsData.length !== 0) {
+      res.status(404);
+      res.json({ success: false, message: "Duplicate information " });
+      res.end();
+      return;
+    }
+    // console.log(
+    //   fullname,
+    //   permanentaddress,
+    //   document,
+    //   documentnumber,
+    //   livingspacetype,
+    //   livingspacenumber,
+    //   generateddocid,
+    //   generatedspaceid,
+    //   req.id
+    // );
+
+    const newTenant = await db
+      .insert(TenantTable)
+      .values({
+        fullname: fullname as string,
+        permanentaddress: permanentaddress as string,
+        document: document as DocumentType,
+        documentnumber: documentnumber as string,
+        livingspacetype: livingspacetype as SpaceType,
+        livingspacenumber: livingspacenumber as string,
+        generateddocid: generateddocid as string,
+        generatedspaceid: generatedspaceid as string,
+        landlordid: req.id as string,
+      })
+      .returning({
+        id: TenantTable.id,
+        generateddocid: TenantTable.generateddocid, //as password
+        generatedspaceid: TenantTable.generatedspaceid, //as username
+      });
+
+    res.status(201);
+    res.json({
+      success: true,
+      message: {
+        userId: generatedspaceid,
+        password: generateddocid,
+        // generatedspaceid: generatedspaceid,
+        // generateddocid: generateddocid,
+      },
+    });
+    res.end();
+    return;
+  } catch (e) {
+    res.status(500);
+    res.json({ success: false, message: "Internal Server Error" });
     res.end();
     return;
   }
-  // console.log(
-  //   fullname,
-  //   permanentaddress,
-  //   document,
-  //   documentnumber,
-  //   livingspacetype,
-  //   livingspacenumber,
-  //   generateddocid,
-  //   generatedspaceid,
-  //   req.id
-  // );
-
-  const newTenant = await db
-    .insert(TenantTable)
-    .values({
-      fullname: fullname as string,
-      permanentaddress: permanentaddress as string,
-      document: document as DocumentType,
-      documentnumber: documentnumber as string,
-      livingspacetype: livingspacetype as SpaceType,
-      livingspacenumber: livingspacenumber as string,
-      generateddocid: generateddocid as string,
-      generatedspaceid: generatedspaceid as string,
-      landlordid: req.id as string,
-    })
-    .returning({
-      id: TenantTable.id,
-      generateddocid: TenantTable.generateddocid, //as password
-      generatedspaceid: TenantTable.generatedspaceid, //as username
-    });
-
-  res.status(201);
-  res.json({
-    AddTenant: "Sucess",
-    userId: "generatedspaceid",
-    password: "generateddocid",
-    generatedspaceid: generatedspaceid,
-    generateddocid: generateddocid,
-  });
-  res.end();
-  return;
 };
 export const alltenantHandler = async (req: Request, res: Response) => {
   const Userid = req.id;
