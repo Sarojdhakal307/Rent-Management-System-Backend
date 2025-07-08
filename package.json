@@ -6,7 +6,8 @@
   "scripts": {
     "start": "tsx watch --clear-screen=false src/index.ts",
     "migration:generate": "drizzle-kit generate",
-    "migration:migrate": "drizzle-kit migrate"
+    "migration:migrate": "drizzle-kit migrate",
+    "build" : "tsc"
   },
   "author": "Saroj Dhakal",
   "license": "ISC",
