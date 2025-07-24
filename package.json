@@ -45,7 +45,9 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^22.5.1",
     "@types/validator": "^13.12.1",
+    "rimraf": "^5.0.5",
     "ts-node": "^10.9.2",
+    "tsx": "^4.7.0",
     "typescript": "^5.5.4"
   }
 }

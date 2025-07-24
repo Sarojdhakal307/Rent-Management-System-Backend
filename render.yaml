@@ -35,7 +35,7 @@ services:
   - key: PORT
     sync: false
   region: virginia
-  buildCommand: npm install
+  buildCommand: npm install && npm run build
   startCommand: node dist/index.js
   autoDeployTrigger: commit
 version: "1"
