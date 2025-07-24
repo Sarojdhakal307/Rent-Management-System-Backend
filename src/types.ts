@@ -10,7 +10,6 @@ export interface signUpReqType {
   hashedPassword: string;
   address: string;
 }
-
 export interface addTenantType {
   fullname: string;
   permanentaddress: string;
