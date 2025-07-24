@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "description": "A backend API for a Rent Management System built with Node.js, Express, TypeScript, and PostgreSQL. Utilizing Drizzle ORM for database management.",
   "main": "./src/index.ts",
-  "scripts": {
-    "dev": "tsx watch --clear-screen=false src/index.ts",
-    "start": "node dist/index.js",
-    "migration:generate": "drizzle-kit generate",
-    "migration:migrate": "drizzle-kit migrate",
-    "build": "tsc"
-  },
+ "scripts": {
+  "clean": "rimraf dist",
+  "build": "npm run clean && tsc",
+  "dev": "tsx watch --clear-screen=false src/index.ts",
+  "start": "npm run build && node dist/index.js",
+  "migration:generate": "drizzle-kit generate",
+  "migration:migrate": "drizzle-kit migrate"
+},
+
   "author": "Saroj Dhakal",
   "license": "ISC",
   "dependencies": {
