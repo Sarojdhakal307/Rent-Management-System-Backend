@@ -1,0 +1,41 @@
+# Exported from Render on 2025-07-24T10:59:53Z
+services:
+- type: web
+  name: api.rms
+  runtime: node
+  repo: https://github.com/Sarojdhakal307/Rent-Management-System-Backend
+  plan: free
+  envVars:
+  - key: SUPABASE_DB_HOST
+    sync: false
+  - key: FRONTEND_URL
+    sync: false
+  - key: MAIL_PASS
+    sync: false
+  - key: MAIL_ADDRESS
+    sync: false
+  - key: PASSWORD_SALT
+    sync: false
+  - key: JWT_KEY
+    sync: false
+  - key: HASH_KEY
+    sync: false
+  - key: DB_URL
+    sync: false
+  - key: DATABASE
+    sync: false
+  - key: DB_PASSWORD
+    sync: false
+  - key: DB_USER
+    sync: false
+  - key: DB_PORT
+    sync: false
+  - key: DB_HOST
+    sync: false
+  - key: PORT
+    sync: false
+  region: virginia
+  buildCommand: npm install
+  startCommand: node dist/index.js
+  autoDeployTrigger: commit
+version: "1"
