@@ -26,6 +26,4 @@ export interface UserPayload_token  {
   role: Role;
   
 };
-
-
 // const { name, email, password, address } = await req.body;

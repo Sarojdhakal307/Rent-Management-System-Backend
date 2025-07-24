@@ -27,7 +27,7 @@ if (cluster.isPrimary) {
   }
 } else {
   app.get("/", (req, res) => {
-    res.send("Hello From Saroj Dhakal's Rent Management System Backend!");
+    res.send("Hello From Saroj Dhakal's Rent Management System Backend !");
   });
   app.use("/api", mainRouter);
 
