@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { mainRouter } from "./router";
 import cluster from "cluster";
-import cors  from "cors";
+import cors from "cors";
 const numCPUs = require("node:os").availableParallelism();
 dotenv.config();
 
@@ -14,7 +14,7 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
-  }),
+  })
 );
 
 app.use(express.json());
@@ -26,6 +26,9 @@ if (cluster.isPrimary) {
     cluster.fork();
   }
 } else {
+  app.get("/", (req, res) => {
+    res.send("Hello From Saroj Dhakal's Rent Management System Backend!");
+  });
   app.use("/api", mainRouter);
 
   app.listen(PORT, () => {
