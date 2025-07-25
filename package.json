@@ -8,7 +8,7 @@
   "build": "npm run clean && tsc && npm run verify-build",
   "verify-build": "node -e \"console.log('Build verification:'); console.log('dist/index.js exists:', require('fs').existsSync('./dist/index.js')); console.log('dist contents:', require('fs').readdirSync('./dist'));\"",
   "dev": "tsx watch --clear-screen=false src/index.ts",
-  "start": "node start.js",
+  "start": "node dist/index.js",
   "start:direct": "node dist/index.js",
   "migration:generate": "drizzle-kit generate",
   "migration:migrate": "drizzle-kit migrate"
