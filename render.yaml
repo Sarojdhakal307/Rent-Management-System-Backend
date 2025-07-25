@@ -36,6 +36,6 @@ services:
     sync: false
   region: virginia
   buildCommand: npm install && npm run build
-  startCommand: npm start
+  startCommand: npm run start
   autoDeployTrigger: commit
 version: "1"
